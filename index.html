@@ -1,0 +1,125 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Запись на маникюр</title>
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff0f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+h1 {
+    color: #d63384;
+    margin-bottom: 20px;
+}
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+input, button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+button {
+    background-color: #d63384;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+button:hover {
+    background-color: #c22572;
+}
+.booking-list {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+.booking-item {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.booking-item button {
+    background-color: #ff4d6d;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+.booking-item button:hover {
+    background-color: #e60040;
+}
+</style>
+</head>
+<body>
+<h1>Запись на маникюр</h1>
+<div class="card">
+  <input type="text" id="name" placeholder="Ваше имя">
+  <input type="tel" id="phone" placeholder="Ваш телефон">
+  <input type="date" id="date">
+  <input type="time" id="time">
+  <button id="saveButton" onclick="saveBooking()">Записаться</button>
+</div>
+<div class="booking-list" id="bookingList"></div>
+<script>
+function saveBooking() {
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    if (name && phone && date && time) {
+        const booking = { name, phone, date, time };
+        let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        bookings.push(booking);
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        displayBookings();
+        document.getElementById('name').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('date').value = '';
+        document.getElementById('time').value = '';
+    } else {
+        alert('Пожалуйста, заполните все поля');
+    }
+}
+
+function deleteBooking(index) {
+    let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    bookings.splice(index, 1);
+    localStorage.setItem('bookings', JSON.stringify(bookings));
+    displayBookings();
+}
+
+function displayBookings() {
+    const bookingList = document.getElementById('bookingList');
+    bookingList.innerHTML = '';
+    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    bookings.forEach((booking, index) => {
+        const div = document.createElement('div');
+        div.className = 'booking-item';
+        div.innerHTML = `<span><strong>${booking.name}</strong> (${booking.phone}) - ${booking.date} ${booking.time}</span> <button onclick="deleteBooking(${index})">Удалить</button>`;
+        bookingList.appendChild(div);
+    });
+}
+window.onload = displayBookings;
+</script>
+</body>
+</html>
