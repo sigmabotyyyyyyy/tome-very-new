@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -88,7 +87,7 @@ function saveBooking() {
     const time = document.getElementById('time').value;
     if (name && phone && date && time) {
         const booking = { name, phone, date, time };
-        let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
         bookings.push(booking);
         localStorage.setItem('bookings', JSON.stringify(bookings));
         displayBookings();
@@ -102,22 +101,26 @@ function saveBooking() {
 }
 
 function deleteBooking(index) {
-    let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     bookings.splice(index, 1);
     localStorage.setItem('bookings', JSON.stringify(bookings));
     displayBookings();
 }
 
 function displayBookings() {
-    const bookingList = document.getElementById('bookingList');
-    bookingList.innerHTML = '';
-    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-    bookings.forEach((booking, index) => {
-        const div = document.createElement('div');
-        div.className = 'booking-item';
-        div.innerHTML = `<span><strong>${booking.name}</strong> (${booking.phone}) - ${booking.date} ${booking.time}</span> <button onclick="deleteBooking(${index})">Удалить</button>`;
-        bookingList.appendChild(div);
-    });
+    try {
+        const bookingList = document.getElementById('bookingList');
+        bookingList.innerHTML = '';
+        const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        bookings.forEach((booking, index) => {
+            const div = document.createElement('div');
+            div.className = 'booking-item';
+            div.innerHTML = `<span><strong>${booking.name}</strong> (${booking.phone}) - ${booking.date} ${booking.time}</span> <button onclick="deleteBooking(${index})">Удалить</button>`;
+            bookingList.appendChild(div);
+        });
+    } catch (e) {
+        console.error('Ошибка чтения localStorage. Откройте сайт через локальный сервер (Live Server или http-server), чтобы данные сохранялись при перезагрузке.');
+    }
 }
 window.onload = displayBookings;
 </script>
